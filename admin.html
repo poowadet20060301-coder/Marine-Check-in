@@ -12,8 +12,7 @@
 <body>
 
 <script>
-// เปลี่ยนให้ชี้ไปยังไฟล์ PHP บน Server ของคุณ
-const MYSQL_API_URL = "login.php"; 
+// ระบบ Login ง่ายๆ - รหัส 1234
 </script>
 
 <div id="loginForm" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:9999;">
@@ -21,17 +20,13 @@ const MYSQL_API_URL = "login.php";
       <div style="font-size:56px;margin-bottom:16px;">⚓</div>
       <h2 style="margin:0 0 24px;font-size:28px;font-family:'Kanit';">Marine Admin</h2>
       
-      <input type="email" id="loginEmailInput" placeholder="อีเมล"
-        style="width:100%;padding:14px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;font-family:'Kanit';font-size:14px;box-sizing:border-box;text-align:center;background:#f9f9f9;"
-        onkeydown="if(event.key==='Enter') handleAdminLogin()">
-      
       <input type="password" id="loginPasswordInput" placeholder="รหัสผ่าน"
-        style="width:100%;padding:14px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;font-family:'Kanit';font-size:14px;box-sizing:border-box;text-align:center;background:#f9f9f9;"
+        style="width:100%;padding:14px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;font-family:'Kanit';font-size:16px;box-sizing:border-box;text-align:center;background:#f9f9f9;letter-spacing:2px;"
         onkeydown="if(event.key==='Enter') handleAdminLogin()">
       
       <div id="loginError" style="color:#d32f2f;font-size:13px;margin-bottom:12px;display:none;font-family:'Kanit';"></div>
       
-      <button onclick="handleAdminLogin()" style="background:#2563eb;color:#fff;border:none;padding:14px 32px;border-radius:8px;font-size:16px;cursor:pointer;width:100%;font-family:'Kanit';font-weight:600;transition:background 0.3s;">🔐 เข้าสู่ระบบ (MySQL)</button>
+      <button onclick="handleAdminLogin()" style="background:#2563eb;color:#fff;border:none;padding:14px 32px;border-radius:8px;font-size:16px;cursor:pointer;width:100%;font-family:'Kanit';font-weight:600;transition:background 0.3s;">🔐 เข้าสู่ระบบ</button>
     </div>
 </div>
 
@@ -104,45 +99,40 @@ const MYSQL_API_URL = "login.php";
 </div>
 
 <script>
-// 🔧 ฟังก์ชัน Login ใหม่ เชื่อมกับ MySQL
-async function handleAdminLogin() {
-  const emailInput = document.getElementById('loginEmailInput');
+// 🔧 ฟังก์ชัน Login ง่ายๆ - ตรวจสอบแค่รหัส 1234
+function handleAdminLogin() {
   const passwordInput = document.getElementById('loginPasswordInput');
   const loginError = document.getElementById('loginError');
   
-  const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
 
-  if (!email || !password) {
-    loginError.textContent = "กรุณากรอกข้อมูลให้ครบ";
+  if (!password) {
+    loginError.textContent = "⚠️ กรุณากรอกรหัสผ่าน";
     loginError.style.display = "block";
+    passwordInput.focus();
     return;
   }
 
-  loginError.textContent = "⌛ กำลังเข้าสู่ระบบ...";
-  loginError.style.display = "block";
-
-  try {
-    const response = await fetch(MYSQL_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ email, password })
-    });
-
-    const data = await response.json();
-
-    if (data.status === 'success') {
-      // เก็บข้อมูลลงเครื่อง
-      localStorage.setItem('marine_admin_email', data.email);
-      localStorage.setItem('marine_admin_role', data.role);
-      localStorage.setItem('marine_admin_name', data.name);
-      
-      showAdminPanel(data);
-    } else {
-      loginError.textContent = data.message;
-    }
-  } catch (err) {
-    loginError.textContent = "ไม่สามารถเชื่อมต่อ Server ได้";
+  if (password === "1234") {
+    // รหัสถูกต้อง - เข้าได้เลย
+    const data = {
+      email: "admin@marine.local",
+      role: "superadmin",
+      name: "Admin"
+    };
+    
+    localStorage.setItem('marine_admin_email', data.email);
+    localStorage.setItem('marine_admin_role', data.role);
+    localStorage.setItem('marine_admin_name', data.name);
+    
+    showAdminPanel(data);
+  } else {
+    // รหัสผิด
+    loginError.textContent = "⚠️ รหัสผ่านไม่ถูกต้อง";
+    loginError.style.display = "block";
+    loginError.style.color = "#d32f2f";
+    passwordInput.value = "";
+    passwordInput.focus();
   }
 }
 
