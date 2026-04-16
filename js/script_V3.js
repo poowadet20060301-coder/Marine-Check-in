@@ -3,7 +3,7 @@
 // GPS Anti-spoof + iOS Support
 // ===============================================
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzrX_vXpUsgfhsnQdKT7OnkkH_mBy483motyLl2FL9a1tQnGoozMKcHp3YE0UqtwA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxDmXNNGxCUP3dAvzO2yc5Byx4n71SeieXDeA3Gs3v1tbVo4pscsFgtcibTxDAuZc4/exec";
 
 const video         = document.getElementById('webcam');
 const checkBtn      = document.getElementById('checkBtn');
