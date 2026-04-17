@@ -8,20 +8,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/admin-style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<script>
-// ระบบ Login ง่ายๆ - รหัส 1234
-</script>
-
 <div id="loginForm" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:9999;">
     <div style="background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:400px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.3);">
       <div style="font-size:56px;margin-bottom:16px;">⚓</div>
       <h2 style="margin:0 0 24px;font-size:28px;font-family:'Kanit';">Marine Admin</h2>
+      
+      <input type="email" id="loginEmailInput" placeholder="อีเมลแอดมิน" 
+        style="width:100%;padding:14px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;font-family:'Kanit';font-size:16px;box-sizing:border-box;text-align:center;background:#f9f9f9;">
       
       <input type="password" id="loginPasswordInput" placeholder="รหัสผ่าน"
         style="width:100%;padding:14px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;font-family:'Kanit';font-size:16px;box-sizing:border-box;text-align:center;background:#f9f9f9;letter-spacing:2px;"
@@ -35,7 +35,6 @@
 
 <div id="adminContent" style="display:none;width:100%;min-height:100vh;">
 <div class="admin-container">
-
     <aside class="sidebar">
         <div class="logo-area">
             <img src="image/logo.png" alt="Logo">
@@ -47,9 +46,8 @@
         <nav id="sideNav">
             <button onclick="show('dashboard')"     id="nav-dashboard"     class="nav-btn active">📊 สถิติภาพรวม</button>
             <button onclick="show('leaveRequests')" id="nav-leaveRequests" class="nav-btn">📩 คำขอลา <span id="leaveBadge" class="badge-count">0</span></button>
-            <button onclick="show('logs')"          id="nav-logs"          class="nav-btn">📋 บันทึกเข้าแถว</button>
+            <button onclick="show('logs')"           id="nav-logs"           class="nav-btn">📋 บันทึกเข้าแถว</button>
             <button onclick="show('studentManage')" id="nav-studentManage" class="nav-btn">👨‍🎓 จัดการรายชื่อ</button>
-            
             <button onclick="show('settings')"      id="nav-settings"      class="nav-btn" style="display:none;">⚙️ ตั้งค่าระบบ</button>
             <button onclick="show('adminManage')"   id="nav-adminManage"   class="nav-btn" style="display:none;">👑 จัดการ Admin</button>
             <button onclick="show('adminActivity')" id="nav-adminActivity" class="nav-btn" style="display:none;">📡 ติดตามกิจกรรม</button>
@@ -59,7 +57,7 @@
     <div class="mobile-nav">
         <button onclick="show('dashboard')"     id="m-nav-dashboard"     class="m-nav-btn active">📊 <span>ภาพรวม</span></button>
         <button onclick="show('leaveRequests')" id="m-nav-leaveRequests" class="m-nav-btn">📩 <span>คำขอลา</span></button>
-        <button onclick="show('logs')"          id="m-nav-logs"          class="m-nav-btn">📋 <span>บันทึก</span></button>
+        <button onclick="show('logs')"           id="m-nav-logs"           class="m-nav-btn">📋 <span>บันทึก</span></button>
         <button onclick="show('studentManage')" id="m-nav-studentManage" class="m-nav-btn">👨‍🎓 <span>รายชื่อ</span></button>
         <button onclick="show('settings')"      id="m-nav-settings"      class="m-nav-btn" style="display:none;">⚙️ <span>ตั้งค่า</span></button>
     </div>
@@ -94,103 +92,11 @@
         <section id="logs" class="page"><h1>📋 บันทึกการเข้าแถว</h1><div class="toolbar"><input type="date" id="logDate" class="input-style"><select id="logYear" class="input-style"><option value="ปี 1">ชั้นปีที่ 1</option><option value="ปี 2">ชั้นปีที่ 2</option><option value="ปี 3">ชั้นปีที่ 3</option><option value="ปี 4">ชั้นปีที่ 4</option></select><button onclick="loadLogs()" class="btn-search">🔍 ค้นหา</button></div><div class="table-container"><table><thead><tr><th>ชื่อ-นามสกุล</th><th>เวลา</th><th>สถานะ</th><th>แก้ไข</th></tr></thead><tbody id="logBody"></tbody></table></div></section>
         <section id="studentManage" class="page"><h1>👨‍🎓 จัดการรายชื่อนักศึกษา</h1><div class="toolbar"><select id="addYear" class="input-style" style="max-width:150px;"><option value="ปี 1">ปี 1</option><option value="ปี 2">ปี 2</option><option value="ปี 3">ปี 3</option><option value="ปี 4">ปี 4</option></select><input type="text" id="addName" class="input-style" placeholder="ชื่อ-นามสกุล"><button onclick="addStudent()" class="btn-save" style="margin-top:0;width:auto;padding:10px 20px;">➕ เพิ่มนักศึกษา</button></div><div id="studentAccordionContainer"></div></section>
         <section id="settings" class="page"><h1>⚙️ ตั้งค่าระบบ</h1><div class="settings-card"><div class="setting-row"><span>เปิดระบบเช็คชื่อ</span><label class="switch"><input type="checkbox" id="systemToggle" checked><span class="slider"></span></label></div><button onclick="getCurrentLocation()" class="btn-gps">📍 ดึงพิกัดปัจจุบัน (จุดเช็คชื่อ)</button><div class="location-inputs"><input type="text" id="lat" class="input-style" placeholder="Latitude"><input type="text" id="lng" class="input-style" placeholder="Longitude"></div><input type="number" id="radius" class="input-style" placeholder="รัศมีอนุญาต (เมตร)" value="50"><div class="alert-box-group"><label class="input-label">ข้อความแจ้งเตือนเมื่ออยู่นอกพื้นที่:</label><textarea id="alertText" class="input-style" style="height:100px;width:100%;" placeholder="ข้อความที่ต้องการแจ้งเตือน"></textarea></div><button onclick="saveSettings()" class="btn-save">💾 บันทึกการตั้งค่า</button></div></section>
-        <section id="adminManage" class="page"><h1>👑 จัดการ Admin</h1><div class="toolbar"><button onclick="addAdminUser()" class="btn-save" style="margin-top:0;width:auto;padding:10px 20px;">➕ เพิ่ม Admin</button></div><div id="adminListContainer" class="table-container"></div></section>
-        <section id="adminActivity" class="page"><h1>📡 ติดตามกิจกรรม Admin</h1><div class="toolbar"><button onclick="loadAdminActivity()" class="btn-search">🔄 รีโหลด</button></div><div class="table-container"><table><thead><tr><th>Timestamp</th><th>Email</th><th>ชื่อ</th><th>ยศ</th><th>Action</th><th>สถานะ</th></tr></thead><tbody id="activityBody"></tbody></table></div></section>
-
+        <section id="adminManage" class="page"><h1>👑 จัดการ Admin</h1><div id="adminListContainer" class="table-container"></div></section>
+        <section id="adminActivity" class="page"><h1>📡 ติดตามกิจกรรม Admin</h1><div class="table-container"><table><thead><tr><th>Timestamp</th><th>Email</th><th>Action</th></tr></thead><tbody id="activityBody"></tbody></table></div></section>
     </main>
 </div>
 </div>
-
-<script>
-// 🔧 ฟังก์ชัน Login ง่ายๆ - ตรวจสอบแค่รหัส 1234
-function handleAdminLogin() {
-  const passwordInput = document.getElementById('loginPasswordInput');
-  const loginError = document.getElementById('loginError');
-  
-  const password = passwordInput.value.trim();
-
-  if (!password) {
-    loginError.textContent = "⚠️ กรุณากรอกรหัสผ่าน";
-    loginError.style.display = "block";
-    passwordInput.focus();
-    return;
-  }
-
-  if (password === "1234") {
-    // รหัสถูกต้อง - เข้าได้เลย
-    const data = {
-      email: "admin@marine.local",
-      role: "superadmin",
-      name: "Admin"
-    };
-    
-    localStorage.setItem('marine_admin_email', data.email);
-    localStorage.setItem('marine_admin_role', data.role);
-    localStorage.setItem('marine_admin_name', data.name);
-    
-    showAdminPanel(data);
-  } else {
-    // รหัสผิด
-    loginError.textContent = "⚠️ รหัสผ่านไม่ถูกต้อง";
-    loginError.style.display = "block";
-    loginError.style.color = "#d32f2f";
-    passwordInput.value = "";
-    passwordInput.focus();
-  }
-}
-
-// 🔧 ฟังก์ชันแสดงผลและแบ่งสิทธิ์
-function showAdminPanel(data) {
-  ADMIN_EMAIL = data.email;
-  ADMIN_ROLE = data.role;
-
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('adminContent').style.display = 'block';
-  document.getElementById('adminEmailDisplay').textContent = data.email;
-  document.getElementById('adminRoleDisplay').textContent = `สิทธิ์: ${data.role.toUpperCase()}`;
-
-  // แบ่งสิทธิ์การมองเห็นเมนู
-  applyPermissions(data.role);
-  
-  Swal.fire({
-    title: 'ยินดีต้อนรับ',
-    text: `คุณ ${data.name} เข้าใช้งานในฐานะ ${data.role}`,
-    icon: 'success',
-    timer: 2000
-  });
-}
-
-function applyPermissions(role) {
-  // สิทธิ์สำหรับ Superadmin เท่านั้น
-  const isSuper = (role === 'superadmin');
-  document.getElementById('nav-settings').style.display = isSuper ? 'block' : 'none';
-  document.getElementById('m-nav-settings').style.display = isSuper ? 'block' : 'none';
-  document.getElementById('nav-adminManage').style.display = isSuper ? 'block' : 'none';
-  document.getElementById('nav-adminActivity').style.display = isSuper ? 'block' : 'none';
-
-  // สิทธิ์สำหรับ Viewer (ห้ามกดปุ่มแก้ไข/ลบ)
-  if (role === 'viewer') {
-    // โค้ดส่วนนี้จะทำงานเมื่อหน้าตารางโหลดเสร็จ (ในไฟล์ admin.js หลักของคุณ)
-    console.log("โหมดอ่านอย่างเดียวเปิดใช้งาน");
-  }
-}
-
-function handleAdminLogout() {
-  localStorage.clear();
-  location.reload();
-}
-
-// เช็คว่าเคยล็อกอินค้างไว้ไหม
-window.onload = () => {
-  const savedEmail = localStorage.getItem('marine_admin_email');
-  const savedRole = localStorage.getItem('marine_admin_role');
-  const savedName = localStorage.getItem('marine_admin_name');
-  
-  if (savedEmail && savedRole) {
-    showAdminPanel({ email: savedEmail, role: savedRole, name: savedName });
-  }
-}
-</script>
 
 <script src="js/admin.js"></script>
 </body>
