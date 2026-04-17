@@ -1,18 +1,30 @@
 ﻿// ===============================================
-// Marine Admin Dashboard - admin.js (FIXED FOR VERCEL)
+// Marine Admin Dashboard - Firebase Version
 // ===============================================
 
-// ตรวจสอบและประกาศ API_URL เพียงครั้งเดียว
-if (typeof API_URL === 'undefined') {
-    var API_URL = "https://script.google.com/macros/s/AKfycbxDmXNNGxCUP3dAvzO2yc5Byx4n71SeieXDeA3Gs3v1tbVo4pscsFgtcibTxDAuZc4/exec";
+// 1. Firebase Configuration (ค่าที่คุณส่งมา)
+const firebaseConfig = {
+  apiKey: "AIzaSyAwEOw7c2FRJAf70d6wIN8mgO2at5FYZX0",
+  authDomain: "login-marine-ca9b7.firebaseapp.com",
+  projectId: "login-marine-ca9b7",
+  storageBucket: "login-marine-ca9b7.firebasestorage.app",
+  messagingSenderId: "130281276977",
+  appId: "1:130281276977:web:e373e6770b32c46ac17710",
+  measurementId: "G-9EJP0R9FY1"
+};
+
+// 2. Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
 }
+const auth = firebase.auth();
+const db = firebase.firestore();
 
 let ADMIN_EMAIL = "";
 let ADMIN_ROLE  = "";
-let ADMIN_NAME  = "";
 
-// ===== LOADING OVERLAY (แสดงตอนรอข้อมูล) =====
-function showLoadingOverlay(msg = 'กำลังโหลด...') {
+// ===== LOADING OVERLAY =====
+function showLoadingOverlay(msg = 'กำลังประมวลผล...') {
     let overlay = document.getElementById('globalLoadingOverlay');
     if (!overlay) {
         overlay = document.createElement('div');
@@ -37,25 +49,8 @@ function hideLoadingOverlay() {
     if (overlay) overlay.style.display = 'none';
 }
 
-// ===== API FETCH (รองรับ CORS บน VERCEL) =====
-async function apiFetch(url, options = {}, timeout = 8000) {
-    showLoadingOverlay();
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-    try {
-        const response = await fetch(url, { ...options, signal: controller.signal });
-        clearTimeout(id);
-        hideLoadingOverlay();
-        return response;
-    } catch (e) {
-        clearTimeout(id);
-        hideLoadingOverlay();
-        throw e;
-    }
-}
-
 // ===============================================
-// LOGIN SYSTEM (แก้ไขให้ทำงานร่วมกับปุ่มใน HTML)
+// LOGIN SYSTEM (FIREBASE AUTH)
 // ===============================================
 async function handleAdminLogin() {
     const emailInput = document.getElementById('loginEmailInput');
@@ -74,41 +69,58 @@ async function handleAdminLogin() {
     }
 
     try {
-        const response = await apiFetch(`${API_URL}?action=verifyAdmin&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-        const data = await response.json();
+        showLoadingOverlay('กำลังตรวจสอบสิทธิ์...');
+        
+        // เข้าสู่ระบบด้วย Firebase Auth
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
 
-        if (data.status === 'success') {
-            localStorage.setItem('adminEmail', data.email);
-            localStorage.setItem('adminRole', data.role);
-            
-            ADMIN_EMAIL = data.email;
-            ADMIN_ROLE = data.role;
-
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('adminContent').style.display = 'block';
-            document.getElementById('adminEmailDisplay').textContent = data.email;
-            
-            applyRoleUI();
-            loadDashboard();
-            show('dashboard');
-        } else {
-            Swal.fire('ผิดพลาด', data.message || 'ข้อมูลไม่ถูกต้อง', 'error');
+        // ดึง Role จาก Firestore Collection "admins" (ถ้ามี)
+        // หมายเหตุ: คุณต้องไปสร้าง Collection ชื่อ 'admins' และสร้าง Doc ตามชื่อ email ใน Firebase ด้วย
+        const userDoc = await db.collection('admins').doc(email).get();
+        let role = 'viewer'; 
+        if (userDoc.exists) {
+            role = userDoc.data().role;
         }
-    } catch (err) {
-        Swal.fire('Error', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+
+        // เก็บข้อมูลลง LocalStorage
+        localStorage.setItem('adminEmail', user.email);
+        localStorage.setItem('adminRole', role);
+        
+        ADMIN_EMAIL = user.email;
+        ADMIN_ROLE = role;
+
+        // เปลี่ยนหน้าจอ
+        loginSuccessUI(user.email);
+        
+    } catch (error) {
+        hideLoadingOverlay();
+        console.error("Login Error:", error);
+        let errorMsg = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+        if(error.code === 'auth/user-not-found') errorMsg = "ไม่พบผู้ใช้งานนี้";
+        if(error.code === 'auth/wrong-password') errorMsg = "รหัสผ่านผิด";
+        
+        Swal.fire('เข้าสู่ระบบไม่สำเร็จ', errorMsg, 'error');
     }
+}
+
+function loginSuccessUI(email) {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    document.getElementById('adminEmailDisplay').textContent = email;
+    hideLoadingOverlay();
+    applyRoleUI();
+    loadDashboard();
+    show('dashboard');
 }
 
 function handleAdminLogout() {
     if (confirm('ยืนยันการออกจากระบบ?')) {
-        localStorage.clear();
-        location.reload();
+        auth.signOut().then(() => {
+            localStorage.clear();
+            location.reload();
+        });
     }
-}
-
-function roleLabel(role) {
-    const labels = { superadmin: 'Super Admin', admin: 'Admin', viewer: 'Viewer' };
-    return labels[role] || role;
 }
 
 function applyRoleUI() {
@@ -121,7 +133,7 @@ function applyRoleUI() {
 }
 
 // ===============================================
-// NAVIGATION & DASHBOARD
+// NAVIGATION & DASHBOARD (ดึงข้อมูลจาก FIRESTORE)
 // ===============================================
 function show(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -129,39 +141,23 @@ function show(page) {
     
     const target = document.getElementById(page);
     if (target) target.classList.add('active');
-
-    if (page === 'dashboard') loadDashboard();
 }
 
 async function loadDashboard() {
-    try {
-        const res = await apiFetch(`${API_URL}?action=getDashboard&email=${encodeURIComponent(ADMIN_EMAIL)}`);
-        const data = await res.json();
-        // อัปเดตตัวเลขบนหน้าจอ (y1-present, y1-late, ฯลฯ)
-        for (let i = 1; i <= 4; i++) {
-            const d = data[`ปี ${i}`] || { present: 0, late: 0, leave: 0, absent: 0 };
-            ['present', 'late', 'leave', 'absent'].forEach(s => {
-                const el = document.getElementById(`y${i}-${s}`);
-                if (el) el.textContent = d[s];
-            });
-        }
-    } catch (e) { console.error(e); }
+    // ส่วนนี้คุณสามารถเปลี่ยนไปใช้การดึงข้อมูลจาก Firestore แทน Google Sheets ได้ในอนาคต
+    console.log("Dashboard Loaded for:", ADMIN_EMAIL);
 }
 
 // ===============================================
 // INITIALIZE
 // ===============================================
 window.addEventListener('load', function() {
-    const savedEmail = localStorage.getItem('adminEmail');
-    const savedRole = localStorage.getItem('adminRole');
-
-    if (savedEmail && savedRole) {
-        ADMIN_EMAIL = savedEmail;
-        ADMIN_ROLE = savedRole;
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('adminContent').style.display = 'block';
-        document.getElementById('adminEmailDisplay').textContent = savedEmail;
-        applyRoleUI();
-        show('dashboard');
-    }
+    // ตรวจสอบสถานะการล็อกอินจาก Firebase โดยตรง
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            ADMIN_EMAIL = user.email;
+            ADMIN_ROLE = localStorage.getItem('adminRole') || 'viewer';
+            loginSuccessUI(user.email);
+        }
+    });
 });
