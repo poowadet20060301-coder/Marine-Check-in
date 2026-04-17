@@ -15,87 +15,60 @@
 </head>
 <body>
 
-<div id="loginForm" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:9999;">
-    <div style="background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:400px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.3);">
-      <div style="font-size:56px;margin-bottom:16px;">⚓</div>
-      <h2 style="margin:0 0 24px;font-size:28px;font-family:'Kanit';">Marine Admin</h2>
+<div id="loginForm" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999;">
+    <div style="background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:380px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+      <div style="font-size:60px;margin-bottom:10px;">⚓</div>
+      <h2 style="margin:0 0 20px;font-family:'Kanit';">Marine Admin</h2>
       
       <input type="email" id="loginEmailInput" placeholder="อีเมลแอดมิน" 
-        style="width:100%;padding:14px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;font-family:'Kanit';font-size:16px;box-sizing:border-box;text-align:center;background:#f9f9f9;">
+        style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px;font-family:'Kanit';box-sizing:border-box;">
       
       <input type="password" id="loginPasswordInput" placeholder="รหัสผ่าน"
-        style="width:100%;padding:14px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;font-family:'Kanit';font-size:16px;box-sizing:border-box;text-align:center;background:#f9f9f9;letter-spacing:2px;"
+        style="width:100%;padding:12px;margin-bottom:15px;border:1px solid #ddd;border-radius:8px;font-family:'Kanit';box-sizing:border-box;"
         onkeydown="if(event.key==='Enter') handleAdminLogin()">
       
-      <div id="loginError" style="color:#d32f2f;font-size:13px;margin-bottom:12px;display:none;font-family:'Kanit';"></div>
+      <div id="loginError" style="color:#d32f2f;font-size:13px;margin-bottom:10px;display:none;font-family:'Kanit';"></div>
       
-      <button onclick="handleAdminLogin()" style="background:#2563eb;color:#fff;border:none;padding:14px 32px;border-radius:8px;font-size:16px;cursor:pointer;width:100%;font-family:'Kanit';font-weight:600;transition:background 0.3s;">🔐 เข้าสู่ระบบ</button>
+      <button onclick="handleAdminLogin()" style="background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;width:100%;font-family:'Kanit';font-weight:600;cursor:pointer;">🔐 เข้าสู่ระบบ</button>
     </div>
 </div>
+
+<div id="adminContent" style="display:none;">
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="logo-area"><h2>⚓ ADMIN</h2><p id="adminEmailDisplay"></p></div>
+            <button onclick="handleAdminLogout()" style="width:100%;background:#dc2626;color:#fff;border:none;padding:10px;border-radius:5px;cursor:pointer;">ออกจากระบบ</button>
+        </aside>
+        <main class="main">
+            <h1 style="padding:20px;">ยินดีต้อนรับสู่ระบบจัดการ</h1>
+        </main>
+    </div>
+  </div>
 
 <div id="adminContent" style="display:none;width:100%;min-height:100vh;">
-<div class="admin-container">
-    <aside class="sidebar">
-        <div class="logo-area">
-            <img src="image/logo.png" alt="Logo">
-            <h2>⚓ ADMIN</h2>
-            <p id="adminEmailDisplay" style="font-size:11px;color:#aaa;word-break:break-all;margin-top:4px;"></p>
-            <p id="adminRoleDisplay" style="font-size:11px;color:#666;margin-top:2px;font-weight:600;"></p>
-        </div>
-        <button onclick="handleAdminLogout()" style="background:#dc2626;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;width:90%;margin:10px auto;display:block;font-family:'Kanit';">🚪 ออกจากระบบ</button>
-        <nav id="sideNav">
-            <button onclick="show('dashboard')"     id="nav-dashboard"     class="nav-btn active">📊 สถิติภาพรวม</button>
-            <button onclick="show('leaveRequests')" id="nav-leaveRequests" class="nav-btn">📩 คำขอลา <span id="leaveBadge" class="badge-count">0</span></button>
-            <button onclick="show('logs')"           id="nav-logs"           class="nav-btn">📋 บันทึกเข้าแถว</button>
-            <button onclick="show('studentManage')" id="nav-studentManage" class="nav-btn">👨‍🎓 จัดการรายชื่อ</button>
-            <button onclick="show('settings')"      id="nav-settings"      class="nav-btn" style="display:none;">⚙️ ตั้งค่าระบบ</button>
-            <button onclick="show('adminManage')"   id="nav-adminManage"   class="nav-btn" style="display:none;">👑 จัดการ Admin</button>
-            <button onclick="show('adminActivity')" id="nav-adminActivity" class="nav-btn" style="display:none;">📡 ติดตามกิจกรรม</button>
-        </nav>
-    </aside>
-
-    <div class="mobile-nav">
-        <button onclick="show('dashboard')"     id="m-nav-dashboard"     class="m-nav-btn active">📊 <span>ภาพรวม</span></button>
-        <button onclick="show('leaveRequests')" id="m-nav-leaveRequests" class="m-nav-btn">📩 <span>คำขอลา</span></button>
-        <button onclick="show('logs')"           id="m-nav-logs"           class="m-nav-btn">📋 <span>บันทึก</span></button>
-        <button onclick="show('studentManage')" id="m-nav-studentManage" class="m-nav-btn">👨‍🎓 <span>รายชื่อ</span></button>
-        <button onclick="show('settings')"      id="m-nav-settings"      class="m-nav-btn" style="display:none;">⚙️ <span>ตั้งค่า</span></button>
-    </div>
-
-    <main class="main">
-        <section id="dashboard" class="page active">
-            <h1>📊 สถิติวันนี้</h1>
-            <div class="year-grid" id="dashboardContent">
-                <script>
-                    for(let i=1; i<=4; i++){
-                        document.write(`
-                            <div class="year-card">
-                                <h3>ชั้นปีที่ ${i}</h3>
-                                <div class="stat-list">
-                                    <div class="stat-item"><span>✅ ปกติ</span><span id="y${i}-present" class="present">0</span></div>
-                                    <div class="stat-item"><span>⏰ สาย</span><span id="y${i}-late" class="late">0</span></div>
-                                    <div class="stat-item"><span>📩 ลา</span><span id="y${i}-leave" class="leave">0</span></div>
-                                    <div class="stat-item"><span>❌ ขาด</span><span id="y${i}-absent" class="absent">0</span></div>
-                                </div>
-                            </div>
-                        `);
-                    }
-                </script>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="logo-area">
+                <img src="image/logo.png" alt="Logo">
+                <h2>⚓ ADMIN</h2>
+                <p id="adminEmailDisplay" style="font-size:11px;color:#aaa;"></p>
+                <p id="adminRoleDisplay" style="font-size:11px;color:#666;font-weight:600;"></p>
             </div>
-        </section>
-
-        <section id="leaveRequests" class="page">
-             <h1>📩 คำขอลาค้างอนุมัติ</h1>
-             <div class="table-container"><table><thead><tr><th>ผู้ขอลา</th><th>เหตุผล</th><th>หลักฐาน</th><th>การดำเนินการ</th></tr></thead><tbody id="leaveBody"></tbody></table></div>
-        </section>
-        
-        <section id="logs" class="page"><h1>📋 บันทึกการเข้าแถว</h1><div class="toolbar"><input type="date" id="logDate" class="input-style"><select id="logYear" class="input-style"><option value="ปี 1">ชั้นปีที่ 1</option><option value="ปี 2">ชั้นปีที่ 2</option><option value="ปี 3">ชั้นปีที่ 3</option><option value="ปี 4">ชั้นปีที่ 4</option></select><button onclick="loadLogs()" class="btn-search">🔍 ค้นหา</button></div><div class="table-container"><table><thead><tr><th>ชื่อ-นามสกุล</th><th>เวลา</th><th>สถานะ</th><th>แก้ไข</th></tr></thead><tbody id="logBody"></tbody></table></div></section>
-        <section id="studentManage" class="page"><h1>👨‍🎓 จัดการรายชื่อนักศึกษา</h1><div class="toolbar"><select id="addYear" class="input-style" style="max-width:150px;"><option value="ปี 1">ปี 1</option><option value="ปี 2">ปี 2</option><option value="ปี 3">ปี 3</option><option value="ปี 4">ปี 4</option></select><input type="text" id="addName" class="input-style" placeholder="ชื่อ-นามสกุล"><button onclick="addStudent()" class="btn-save" style="margin-top:0;width:auto;padding:10px 20px;">➕ เพิ่มนักศึกษา</button></div><div id="studentAccordionContainer"></div></section>
-        <section id="settings" class="page"><h1>⚙️ ตั้งค่าระบบ</h1><div class="settings-card"><div class="setting-row"><span>เปิดระบบเช็คชื่อ</span><label class="switch"><input type="checkbox" id="systemToggle" checked><span class="slider"></span></label></div><button onclick="getCurrentLocation()" class="btn-gps">📍 ดึงพิกัดปัจจุบัน (จุดเช็คชื่อ)</button><div class="location-inputs"><input type="text" id="lat" class="input-style" placeholder="Latitude"><input type="text" id="lng" class="input-style" placeholder="Longitude"></div><input type="number" id="radius" class="input-style" placeholder="รัศมีอนุญาต (เมตร)" value="50"><div class="alert-box-group"><label class="input-label">ข้อความแจ้งเตือนเมื่ออยู่นอกพื้นที่:</label><textarea id="alertText" class="input-style" style="height:100px;width:100%;" placeholder="ข้อความที่ต้องการแจ้งเตือน"></textarea></div><button onclick="saveSettings()" class="btn-save">💾 บันทึกการตั้งค่า</button></div></section>
-        <section id="adminManage" class="page"><h1>👑 จัดการ Admin</h1><div id="adminListContainer" class="table-container"></div></section>
-        <section id="adminActivity" class="page"><h1>📡 ติดตามกิจกรรม Admin</h1><div class="table-container"><table><thead><tr><th>Timestamp</th><th>Email</th><th>Action</th></tr></thead><tbody id="activityBody"></tbody></table></div></section>
-    </main>
-</div>
+            <button onclick="handleAdminLogout()" style="background:#dc2626;color:#fff;border:none;padding:8px 16px;border-radius:6px;width:90%;margin:10px auto;display:block;cursor:pointer;">🚪 ออกจากระบบ</button>
+            <nav id="sideNav">
+                <button onclick="show('dashboard')" class="nav-btn active">📊 สถิติภาพรวม</button>
+                <button onclick="show('leaveRequests')" class="nav-btn">📩 คำขอลา</button>
+                <button onclick="show('logs')" class="nav-btn">📋 บันทึกเข้าแถว</button>
+                <button onclick="show('studentManage')" class="nav-btn">👨‍🎓 จัดการรายชื่อ</button>
+            </nav>
+        </aside>
+        <main class="main">
+            <section id="dashboard" class="page active"><h1>📊 Dashboard</h1><div id="dashboardContent"></div></section>
+            <section id="leaveRequests" class="page"><h1>📩 คำขอลา</h1><div id="leaveBody"></div></section>
+            <section id="logs" class="page"><h1>📋 บันทึกเข้าแถว</h1><div id="logBody"></div></section>
+            <section id="studentManage" class="page"><h1>👨‍🎓 จัดการรายชื่อ</h1><div id="studentAccordionContainer"></div></section>
+        </main>
+    </div>
 </div>
 
 <script src="js/admin.js"></script>
