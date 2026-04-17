@@ -33,18 +33,6 @@
     </div>
 </div>
 
-<div id="adminContent" style="display:none;">
-    <div class="admin-container">
-        <aside class="sidebar">
-            <div class="logo-area"><h2>⚓ ADMIN</h2><p id="adminEmailDisplay"></p></div>
-            <button onclick="handleAdminLogout()" style="width:100%;background:#dc2626;color:#fff;border:none;padding:10px;border-radius:5px;cursor:pointer;">ออกจากระบบ</button>
-        </aside>
-        <main class="main">
-            <h1 style="padding:20px;">ยินดีต้อนรับสู่ระบบจัดการ</h1>
-        </main>
-    </div>
-  </div>
-
 <div id="adminContent" style="display:none;width:100%;min-height:100vh;">
     <div class="admin-container">
         <aside class="sidebar">
@@ -62,11 +50,28 @@
                 <button onclick="show('studentManage')" class="nav-btn">👨‍🎓 จัดการรายชื่อ</button>
             </nav>
         </aside>
+
         <main class="main">
-            <section id="dashboard" class="page active"><h1>📊 Dashboard</h1><div id="dashboardContent"></div></section>
-            <section id="leaveRequests" class="page"><h1>📩 คำขอลา</h1><div id="leaveBody"></div></section>
-            <section id="logs" class="page"><h1>📋 บันทึกเข้าแถว</h1><div id="logBody"></div></section>
-            <section id="studentManage" class="page"><h1>👨‍🎓 จัดการรายชื่อ</h1><div id="studentAccordionContainer"></div></section>
+            <section id="dashboard" class="page active">
+                <h1>📊 Dashboard</h1>
+                <div id="dashboardContent">
+                    </div>
+            </section>
+            
+            <section id="leaveRequests" class="page">
+                <h1>📩 คำขอลา</h1>
+                <div id="leaveBody"></div>
+            </section>
+            
+            <section id="logs" class="page">
+                <h1>📋 บันทึกการเข้าแถว</h1>
+                <div id="logBody"></div>
+            </section>
+            
+            <section id="studentManage" class="page">
+                <h1>👨‍🎓 จัดการรายชื่อนักศึกษา</h1>
+                <div id="studentAccordionContainer"></div>
+            </section>
         </main>
     </div>
 </div>
